@@ -12,6 +12,9 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.views.imagehelper.ImageSource;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipeline;
+
 class FastImageViewModule extends ReactContextBaseJavaModule {
 
     private static final String REACT_CLASS = "FastImageView";
@@ -66,7 +69,14 @@ class FastImageViewModule extends ReactContextBaseJavaModule {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Glide.getPhotoCacheDir(activity.getApplicationContext()).delete();
                 Glide.get(activity.getApplicationContext()).clearMemory();
+                
+                ImagePipeline imagePipeline = Fresco.getImagePipeline();
+                imagePipeline.clearCaches();
+                
+                activity.getApplicationContext().getCacheDir().delete();
+                
                 promise.resolve(null);
             }
         });
